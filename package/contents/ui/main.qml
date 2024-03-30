@@ -11,7 +11,7 @@ Item {
         sequence: "Meta+I"
         onActivated: {
             const props = getWindowProperties();
-            console.log(props);
+            logProps(props);
             setClipboard(props);
         }
     }
@@ -23,7 +23,7 @@ Item {
         sequence: "Meta+Shift+I"
         onActivated: {
             const props = getWindowJson();
-            console.log(props);
+            logProps(props);
             setClipboard(props);
         }
     }
@@ -38,6 +38,10 @@ Item {
 
     function getWindowJson() {
         return JSON.stringify(Workspace.activeWindow, undefined, 2) + "\n";
+    }
+    
+    function logProps(props) {
+        console.log("kwin_info_dump\n" + props);
     }
 
     function setClipboard(text) {
