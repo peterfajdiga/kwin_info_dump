@@ -5,12 +5,24 @@ Item {
     id: qmlBase
 
     ShortcutHandler {
-        id: shortcutDumpWindow
-        name: "KwinInfoDumpWindow"
-        text: "Dump window information"
-        sequence: "Meta+Ctrl+F1"
+        id: shortcutDumpWindowProps
+        name: "KwinInfoDumpWindowProps"
+        text: "Dump window properties"
+        sequence: "Meta+I"
         onActivated: {
             const props = getWindowProperties();
+            console.log(props);
+            setClipboard(props);
+        }
+    }
+
+    ShortcutHandler {
+        id: shortcutDumpWindowJson
+        name: "KwinInfoDumpWindowJson"
+        text: "Dump window JSON"
+        sequence: "Meta+Shift+I"
+        onActivated: {
+            const props = getWindowJson();
             console.log(props);
             setClipboard(props);
         }
@@ -22,6 +34,10 @@ Item {
             propsString += prop + ": " + Workspace.activeWindow[prop] + "\n";
         }
         return propsString;
+    }
+
+    function getWindowJson() {
+        return JSON.stringify(Workspace.activeWindow, undefined, 2) + "\n";
     }
 
     function setClipboard(text) {
