@@ -12,4 +12,4 @@ package:
 	tar -czf ./kwin_info_dump_${subst .,_,${VERSION}}.tar.gz ./package
 
 logs:
-	journalctl -t kwin_x11 -g '^qml:|^file://.*kwin_info_dump' -f
+	journalctl -g '^qml: kwin_info_dump' -n 1
