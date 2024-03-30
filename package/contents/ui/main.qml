@@ -10,9 +10,16 @@ Item {
         text: "Dump window information"
         sequence: "Meta+Ctrl+F1"
         onActivated: {
-            for (const property in Workspace.activeWindow) {
-                console.log(property, Workspace.activeWindow[property]);
-            }
+            const props = getWindowProperties();
+            console.log(props);
         }
+    }
+
+    function getWindowProperties() {
+        let propsString = "";
+        for (const prop in Workspace.activeWindow) {
+            propsString += prop + ": " + Workspace.activeWindow[prop] + "\n";
+        }
+        return propsString;
     }
 }
