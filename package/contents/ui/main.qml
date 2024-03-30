@@ -12,6 +12,7 @@ Item {
         onActivated: {
             const props = getWindowProperties();
             console.log(props);
+            setClipboard(props);
         }
     }
 
@@ -21,5 +22,17 @@ Item {
             propsString += prop + ": " + Workspace.activeWindow[prop] + "\n";
         }
         return propsString;
+    }
+
+    function setClipboard(text) {
+        // Use TextEdit workaround to access the clipboard. Works only on X11.
+        textEditClipboard.text = text;
+        textEditClipboard.selectAll();
+        textEditClipboard.cut();
+    }
+
+    TextEdit{
+        id: textEditClipboard
+        visible: false
     }
 }
