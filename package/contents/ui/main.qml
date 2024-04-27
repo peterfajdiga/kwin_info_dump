@@ -4,40 +4,80 @@ import org.kde.kwin 3.0
 Item {
     id: qmlBase
 
+    property var nextCreatedHandler: undefined;
+
     ShortcutHandler {
         id: shortcutDumpWindowProps
         name: "KwinInfoDumpWindowProps"
-        text: "Dump window properties"
+        text: "Dump active window properties"
         sequence: "Meta+I"
         onActivated: {
-            const props = getWindowProperties();
-            logProps(props);
-            setClipboard(props);
+            dumpProps(getWindowProperties(Workspace.activeWindow));
         }
     }
 
     ShortcutHandler {
         id: shortcutDumpWindowJson
         name: "KwinInfoDumpWindowJson"
-        text: "Dump window JSON"
+        text: "Dump active window JSON"
         sequence: "Meta+Shift+I"
         onActivated: {
-            const props = getWindowJson();
-            logProps(props);
-            setClipboard(props);
+            dumpProps(getWindowJson(Workspace.activeWindow));
         }
     }
 
-    function getWindowProperties() {
+    ShortcutHandler {
+        id: shortcutDumpWindowPropsCreated
+        name: "KwinInfoDumpWindowPropsCreated"
+        text: "Dump next created window properties"
+        sequence: "Meta+O"
+        onActivated: {
+            setNextCreatedHandler(getWindowProperties);
+        }
+    }
+
+    ShortcutHandler {
+        id: shortcutDumpWindowJsonCreated
+        name: "KwinInfoDumpWindowJsonCreated"
+        text: "Dump next created window JSON"
+        sequence: "Meta+Shift+O"
+        onActivated: {
+            setNextCreatedHandler(getWindowJson);
+        }
+    }
+
+    function setNextCreatedHandler(getProps) {
+        if (nextCreatedHandler !== undefined) {
+            cleanupNextCreatedHandler();
+        }
+
+        nextCreatedHandler = (window) => {
+            dumpProps(getProps(window));
+            cleanupNextCreatedHandler();
+        };
+        Workspace.windowAdded.connect(nextCreatedHandler);
+    }
+
+    function cleanupNextCreatedHandler() {
+        Workspace.windowAdded.disconnect(nextCreatedHandler);
+        nextCreatedHandler = undefined;
+    }
+
+    function dumpProps(props) {
+        logProps(props);
+        setClipboard(props);
+    }
+
+    function getWindowProperties(window) {
         let propsString = "";
-        for (const prop in Workspace.activeWindow) {
-            propsString += prop + ": " + Workspace.activeWindow[prop] + "\n";
+        for (const prop in window) {
+            propsString += prop + ": " + window[prop] + "\n";
         }
         return propsString;
     }
 
-    function getWindowJson() {
-        return JSON.stringify(Workspace.activeWindow, undefined, 2) + "\n";
+    function getWindowJson(window) {
+        return JSON.stringify(window, undefined, 2) + "\n";
     }
     
     function logProps(props) {
