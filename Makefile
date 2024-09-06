@@ -9,7 +9,7 @@ uninstall:
 	kpackagetool6 --type=KWin/Script -r kwin_info_dump
 
 package:
-	tar -czf ./kwin_info_dump_${subst .,_,${VERSION}}.tar.gz ./package
+	tar -czf ./kwin_info_dump_${subst .,_,${VERSION}}.tar.gz ./package --transform s/package/kwin_info_dump/
 
 logs:
 	journalctl -g '^qml: kwin_info_dump' -n 1
